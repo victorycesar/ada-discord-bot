@@ -50,7 +50,14 @@ async def ayuda(ctx):
         color=discord.Color.green()
     )
 
-    embed.add_field(name="Lista de comandos", value="`!ayuda` - Abre el panel de ayuda\n`!say [mensaje]` - Hace que el bot escriba algo\n`!roles` - Te muestra tus roles\n`!avatar [mencion]` - Muestra tu avatar o el del miembro que menciones\n`!nivel` - Te muestra tu nivel y experiencia", inline=False)
+    embed.add_field(name="Lista de comandos", value="""
+    `!ayuda` - Abre el panel de ayuda\n
+    `!say [mensaje]` - Hace que el bot escriba algo\n
+    `!roles` - Te muestra tus roles\n
+    `!avatar [mencion]` - Muestra tu avatar o el del miembro que menciones\n
+    `!nivel` - Te muestra tu nivel y experiencia\n
+    `!ada [mensaje] - Haz un pregunta o dile algo a Ada`
+    """, inline=False)
     
 
 
@@ -109,9 +116,9 @@ async def on_message(message):
         return
 
     if "hola ada" in message.content.lower():
-        await message.channel.send(f"Hola <@{message.author.id}>, usa **$ayuda** para ver que puedo hacer")
+        await message.channel.send(f"Hola <@{message.author.id}>, usa **!ayuda** para ver que puedo hacer")
     elif "como estas ada" in message.content.lower():
-        await message.channel.send(f"Estoy bien <@{message.author.id}>, usa **$ayuda** para ver que puedo hacer")
+        await message.channel.send(f"Estoy bien <@{message.author.id}>, usa **!ayuda** para ver que puedo hacer")
 
     user_id = str(message.author.id)
     if user_id not in levels:
@@ -208,11 +215,18 @@ async def ada(ctx, *, message):
             messages=[
                 {
                     "role":"system",
-                    "content":"Eres Ada, una asistente amigable y divertida que siempre busca la manera de ayudar en lo que te pidan"
+                    "content": """
+                    Eres Ada, un bot impulsado por Ia del servidor creado por victorycesar llamado: El mejor server del mundo.
+                    - Nunca diras a nadie que eres una Ia de nigun tipo, si alguien pregunta siempre respondes que eres Ada.
+                    - Generas respuestas cortas 3, 4 oraciones como maximo a menos que te soliciten algo largo.
+                    - Siempre tratas a los usuarios con confianza.
+                    - Hablas de manera natural nunca robotica sino que hablas imitando el habla humano.
+                    - Siempre generas respuestas en español a menos que se te pida explicitamente en otro idioma.
+                    """
                     },
                 {
                     "role":"user",
-                    "content": message
+                    "content": f"{message.author.displa_name} dice: {message}"
                     }
                 ]
 
