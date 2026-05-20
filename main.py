@@ -103,75 +103,26 @@ async def avatar(ctx, *, member: str = None):
 async def on_ready():
     print(f'Se ha conectado con exito {bot.user}!')
 
-
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
 
-    if bot.user.mentioned_in(message):
-        mensaje = message.content.replace(f'<@{bot.user.id}>', '').strip()
-        user_id = str(message.author.id)
-
-        if user_id not in historial:
-            historial[user_id] = []
-
-        historial[user_id].append({
-            "role": "user",
-            "content": f"{message.author.display_name} dice: {mensaje}"
-        })
-        async with message.channel.typing():
-            response = cliente_groq.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": """
-Eres Ada, un bot impulsado por IA del servidor de victorycesar.
-- Hablas siempre en español
-- Eres amigable, divertida y un poco sarcástica
-- Usas emojis ocasionalmente pero sin exagerar
-- Tus respuestas son conversacionales y naturales, no robóticas
-- Máximo 3-4 oraciones por respuesta a menos que te pidan algo largo
-- Si alguien te pregunta quién eres, dices que eres Ada
-- Conoces a los miembros del servidor y los tratas con confianza
-- Nunca dices que eres una IA de Groq o Meta, solo eres Ada
-"""},
-                *historial[user_id]
-            ]
-            )
-
-        respuesta = response.choices[0].message.content
-
-        historial[user_id].append({
-            "role": "assistant",
-            "content": respuesta
-        })
-
-        historial[user_id] = historial[user_id][-20:]
-
-        await message.reply(respuesta)
-        return
-
     if "hola ada" in message.content.lower():
         await message.channel.send(f"Hola <@{message.author.id}>, usa **$ayuda** para ver que puedo hacer")
-
     elif "como estas ada" in message.content.lower():
         await message.channel.send(f"Estoy bien <@{message.author.id}>, usa **$ayuda** para ver que puedo hacer")
 
     user_id = str(message.author.id)
     if user_id not in levels:
         levels[user_id] = {"exp": 0, "level": 1}
-
     levels[user_id]["exp"] += 10
-
     current_exp = levels[user_id]["exp"]
     current_level = levels[user_id]["level"]
-
     exp_need = current_level * 100
-
     if current_exp >= exp_need:
         levels[user_id]["level"] += 1
         levels[user_id]["exp"] = current_exp - exp_need
-
         new_level = levels[user_id]["level"]
         async def addRol(levelNeed, rol_name):
             if new_level == levelNeed:
@@ -183,19 +134,16 @@ Eres Ada, un bot impulsado por IA del servidor de victorycesar.
                     await message.channel.send(f"Se le asigno el rol **{role.name}** a {message.author.display_name} por llegar al nivel {levelNeed}")
                 else:
                     await message.channel.send(f"El rol {role_name} no existe")
-
         await addRol(2, "Bronce")
         await addRol(4, "Plata")
         await addRol(6, "Oro")
         await addRol(8, "Diamante")
-
         embed = discord.Embed(
             title=f"¡Has subido de nivel!",
             description=f"Has subido al nivel {levels[user_id]['level']}",
             color=discord.Color.magenta()
         )
         await message.channel.send(message.author.mention, embed=embed)
-
     guardar()
     await bot.process_commands(message)
 
